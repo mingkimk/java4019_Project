@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,15 +34,17 @@ public class Signup extends JFrame {
 	private JTextField tfPhone;
 	private static ClientChat ch = null;
 	String msg = null;
+	Socket chh = null;
+
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		Signup frame = new Signup(ch);
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Signup frame = new Signup(ch);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -50,15 +53,19 @@ public class Signup extends JFrame {
 		});
 	}
 
-	public Signup(ClientChat ch) {
-		this.ch = ch;
+	public Signup(ClientChat withServer) {
+		this.ch = withServer;
 		createjlabel();
 		createtxtfield();
 		createbtn();
 		jbchk();
 		Pwdchk();
-		complete(msg);
+		complete();
 	}
+
+//	public Signup(Runnable runnable) {
+//		// TODO Auto-generated constructor stub
+//	}
 
 	private void createjlabel() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -251,8 +258,19 @@ public class Signup extends JFrame {
 
 		});
 	}
+	
+	public void idchk(String msg) {
+		if (msg.equals("check/yes")) {
+			JOptionPane.showMessageDialog(null, "사용 가능한 아이디입니다.");
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		} else if (msg.equals("check/no")) {
+			JOptionPane.showMessageDialog(null, "이미 사용중인 아이디입니다.");
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			tfUsername.setText("");
+		}
+	}
 
-	public void complete(String msg) {
+	public void complete() {
 		joinCompleteBtn = new JButton("회원가입완료");
 		joinCompleteBtn.setBounds(130, 440, 139, 29);
 		contentPane.add(joinCompleteBtn);
@@ -268,23 +286,28 @@ public class Signup extends JFrame {
 
 				ch.streamSet(check);
 				// if (msg != null) {
-				if (msg.equals("yes")) {
-					JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
-					dispose();
-				} else if (msg.equals("no")) {
-					JOptionPane.showMessageDialog(null, "회원가입이 실패하였습니다.");
-					dispose();
-				}
-				// }
-//				if (result) {
+//				if (msg.equals("yes")) {
 //					JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
 //					dispose();
-//				} else {
+//				} else if (msg.equals("no")) {
 //					JOptionPane.showMessageDialog(null, "회원가입이 실패하였습니다.");
 //					dispose();
 //				}
+				// }
 			}
 		});
 
 	}
+	
+	public void membercheck(String msg) {
+		if (msg.equals("member/yes")) {
+			JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
+			dispose();
+		} else if (msg.equals("member/no")) {
+			JOptionPane.showMessageDialog(null, "회원가입이 실패하였습니다.");
+			dispose();
+		}
+	}
+	
+	
 }

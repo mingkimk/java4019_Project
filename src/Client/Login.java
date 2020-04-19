@@ -8,10 +8,14 @@ import java.io.Serializable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import Manager.Setting;
+import Manager.Shoppingmall;
 
 public class Login extends JFrame implements ActionListener, Serializable {
 	JPanel nP, cP, sP, eP;
@@ -19,6 +23,7 @@ public class Login extends JFrame implements ActionListener, Serializable {
 	JTextField idField, pwdField, loginField;
 	JButton loginBtn, joinBtn;
 	ClientChat client = null;
+	private String msg;
 
 	Login(ClientChat client) {
 		super("로그인");
@@ -78,13 +83,26 @@ public class Login extends JFrame implements ActionListener, Serializable {
 		this.setVisible(true);
 	}
 
-	private void loginchk() {
+	private void loginchk(String msg) {
 		loginBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String[] check = { idField.getText(), pwdField.getText(), "login" };
 					client.streamSet(check);
+//					int go = loginresult(msg);
+//					if (go == 1) {
+//						JOptionPane.showMessageDialog(null, "로그인 완료");
+//						System.out.println("쇼핑몰고고");
+//					} else if (go == 5) {
+//						JOptionPane.showMessageDialog(null, "로그인 완료");
+//						System.out.println("세팅고고");
+//					} else if (go == 10) {
+//						JOptionPane.showMessageDialog(null, "존재하지 않는 아이디거나 비밀번호가 맞지 않습니다.");
+//						setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+//						idField.setText("");
+//						pwdField.setText("");
+//					}
 
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -95,7 +113,7 @@ public class Login extends JFrame implements ActionListener, Serializable {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		loginchk();
+		loginchk(msg);
 		gosignup();
 	}
 
@@ -108,6 +126,27 @@ public class Login extends JFrame implements ActionListener, Serializable {
 			}
 
 		});
+	}
+
+	public int loginresult(String msg) {
+		if (msg.contains("login/yes/1")) {
+			 JOptionPane.showMessageDialog(null, "로그인 완료");
+			 new Shoppingmall();
+			 System.out.println("쇼핑몰고고");
+			return 1;
+		} else if (msg.contains("login/yes/5")) {
+			 JOptionPane.showMessageDialog(null, "로그인 완료");
+			 new Setting();
+			System.out.println("세팅고고");
+			return 5;
+		} else if (msg.contains("login/yes/10")) {
+			 JOptionPane.showMessageDialog(null, "존재하지 않는 아이디거나 비밀번호가 맞지 않습니다.");
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			idField.setText("");
+			pwdField.setText("");
+			return 10;
+		}
+		return 0;
 	}
 
 }

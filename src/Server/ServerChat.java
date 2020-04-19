@@ -2,6 +2,7 @@ package Server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,16 +12,26 @@ import java.net.Socket;
 
 public class ServerChat extends Thread {
 	private Socket withClient = null;
+	private Socket orderClient=null;
 	private InputStream reMsg = null;
 	private OutputStream sendMsg = null;
 	private String id = null;
 	private String[] check = null;
 	private ServerCenter sc = null;
+	private ServerChat ss = null;
 	String msg = null;
 
-	ServerChat(Socket withClient, ServerCenter sc) {
+	ServerChat(Socket withClient,Socket orderClient,ServerCenter sc) {
 		this.withClient = withClient;
+		this.orderClient=orderClient;
 		this.sc = sc;
+		try {
+			sendMsg = withClient.getOutputStream();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ss = this;
 		// streamSet();
 		// receive(msg);
 	}
@@ -37,15 +48,13 @@ public class ServerChat extends Thread {
 			@Override
 			public void run() {
 				try {
-					while (true) {
-						if (msg != null) {
-							System.out.println("여기는 서버챗인데 받은 메세지를 확인해볼것이야 : " + msg);
-							sendMsg = withClient.getOutputStream();
-							System.out.println("이번엔 어디까지 간거니??");
-							sendMsg.write(msg.getBytes());
-							System.out.println("서버에서 메세지를 보냈어요");
-						}
+					// while (true) {
+					if (msg != null) {
+						System.out.println("여기는 서버챗인데 받은 메세지를 확인해볼것이야 : " + msg);
+						sendMsg.write(msg.getBytes());
+						System.out.println("서버에서 메세지를 보냈어요");
 					}
+				}
 //			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 //			ObjectOutputStream oos = new ObjectOutputStream(baos);
 //			oos.writeObject(msg);
@@ -57,7 +66,7 @@ public class ServerChat extends Thread {
 //			sendMsg.write(bowl);
 //			System.out.println("보내기 완료");
 
-				}
+				// }
 
 				catch (Exception e) {
 					// TODO: handle exception
@@ -90,11 +99,8 @@ public class ServerChat extends Thread {
 								System.out.println(check[i]);
 								id = check[0];
 							}
-							sc.select(check);
+							sc.select(check, ss);
 
-//							String txt = "정상접속 되었습니다.";
-//							sendMsg = withClient.getOutputStream();
-//							sendMsg.write(txt.getBytes());
 						}
 
 						InetAddress c_ip = withClient.getInetAddress();

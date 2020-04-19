@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import DB.MemberDTO;
+
 public class ManagementDAO {
 
 	private Connection conn;
@@ -16,6 +18,7 @@ public class ManagementDAO {
 	private ResultSet rs;
 	ManagementDTO d = null;
 	private static ManagementDAO DAOobj;
+	private ManagementDTO goods=null;
 
 	public ManagementDAO() {
 	}
@@ -37,16 +40,26 @@ public class ManagementDAO {
 		return DAOobj;
 	}
 
-	public boolean Insert(ManagementDTO dto) {
+	public boolean Insert(Object obj) {
 		boolean result = false;
-		if (this.connect()) {
+		String[] check = (String[]) oj;
+		goods = new ManagementDTO();
+		for (int i = 0; i < check.length; i++) {
+			goods.setCode(check[0]);
+			goods.setCname(check[1]);
+			goods.setCnt(check[2]);
+			goods.setPrice(check[3]);
+		
+		}
+		if (connect()) {
 			try {
 				String sql = "insert into goods values(?,?,?,?)";
 				PreparedStatement psmt = conn.prepareStatement(sql);
-				psmt.setInt(1, dto.getCode());
-				psmt.setString(2, dto.getCname());
-				psmt.setInt(3, dto.getCnt());
-				psmt.setInt(4, dto.getPrice());
+				psmt.setString(1, goods.getCode());
+				psmt.setString(2, goods.getCname());
+				psmt.setString(3, goods.getCnt());
+				psmt.setString(4, goods.getPrice());
+			
 				int r = psmt.executeUpdate();
 
 				if (r > 0) {
@@ -143,7 +156,7 @@ public class ManagementDAO {
 	private boolean connect() {
 		boolean result = false;
 		try {
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:orcl", "system", "11111111");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:oracle", "system", "11111111");
 			result = true;
 		} catch (Exception e) {
 			// TODO: handle exception
